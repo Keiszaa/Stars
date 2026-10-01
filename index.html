@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Written in the stars</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500;1,600&family=Jost:wght@300;400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --night: #080b24;
+      --indigo: #1d1a55;
+      --violet: #5b3fa0;
+      --gold: #ffe08a;
+      --pink: #ff9ec4;
+
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body: 'Jost', system-ui, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      color: #f4efff;
+      font-family: var(--font-body);
+      font-weight: 300;
+      background:
+        radial-gradient(ellipse at 50% 110%, var(--violet) 0, transparent 60%),
+        radial-gradient(ellipse at 50% -10%, var(--indigo) 0, var(--night) 70%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 2px;
+      height: 2px;
+      border-radius: 50%;
+      background: #fff;
+      animation: twinkle 4s ease-in-out infinite;
+      box-shadow:
+        10vw 12vh #fff9,
+        30vw 70vh #fff6,
+        52vw 8vh  #fffb,
+        71vw 30vh #fff7,
+        88vw 78vh #fff8,
+        18vw 40vh #fff5,
+        64vw 90vh #fff6,
+        93vw 14vh #fffa,
+        42vw 55vh #fff4,
+        5vw  85vh #fff7;
+    }
+
+    @keyframes twinkle {
+      50% { opacity: 0.35; }
+    }
+
+    .sky {
+      counter-reset: lit;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      width: min(92vw, 400px);
+    }
+
+    .map {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1;
+    }
+
+    .map input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+      counter-increment: lit;
+    }
+
+    .star {
+      position: absolute;
+      left: calc(var(--x) * 1%);
+      top: calc(var(--y) * 1%);
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      transform: translate(-50%, -50%);
+      cursor: pointer;
+      filter: drop-shadow(0 0 6px #fff9);
+    }
+
+    .star::before {
+      content: "";
+      width: 22px;
+      height: 22px;
+      background: #fff;
+      clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
+      transition: 0.5s;
+      animation: twinkle 2.6s ease-in-out infinite;
+      animation-delay: calc(var(--i) * 0.35s);
+    }
+
+    .star:hover::before {
+      transform: scale(1.25);
+    }
+
+    input:focus-visible + .star {
+      outline: 2px solid var(--gold);
+      border-radius: 50%;
+    }
+
+    input:checked + .star {
+      filter: drop-shadow(0 0 10px var(--gold));
+    }
+
+    input:checked + .star::before {
+      background: var(--gold);
+      transform: scale(1.6) rotate(45deg);
+      animation: none;
+    }
+
+    .map svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    .map line {
+      stroke: var(--gold);
+      stroke-width: 0.5;
+      stroke-linecap: round;
+      opacity: 0;
+      transition: opacity 0.8s;
+      filter: drop-shadow(0 0 2px var(--gold));
+    }
+
+    .map polygon {
+      fill: var(--pink);
+      opacity: calc(var(--on, 0) * 0.28);
+      transition: opacity 2s 0.5s;
+      filter: blur(1px) drop-shadow(0 0 8px var(--pink));
+    }
+
+    .sky:has(#s1:checked):has(#s2:checked) .l1,
+    .sky:has(#s2:checked):has(#s3:checked) .l2,
+    .sky:has(#s3:checked):has(#s4:checked) .l3,
+    .sky:has(#s4:checked):has(#s5:checked) .l4,
+    .sky:has(#s5:checked):has(#s6:checked) .l5,
+    .sky:has(#s6:checked):has(#s7:checked) .l6,
+    .sky:has(#s7:checked):has(#s8:checked) .l7,
+    .sky:has(#s8:checked):has(#s1:checked) .l8 {
+      opacity: 1;
+    }
+
+    .sky:has(#s1:checked):has(#s2:checked):has(#s3:checked):has(#s4:checked):has(#s5:checked):has(#s6:checked):has(#s7:checked):has(#s8:checked) {
+      --on: 1;
+    }
+
+    .caption {
+      display: grid;
+      width: 100%;
+      text-align: center;
+    }
+
+    .caption > * {
+      grid-area: 1 / 1;
+    }
+
+    .hint {
+      margin: 0;
+      font-size: 15px;
+      letter-spacing: 0.02em;
+      opacity: calc(1 - var(--on, 0));
+      transition: opacity 0.6s;
+    }
+
+    .hint small {
+      display: block;
+      margin-top: 4px;
+      font-size: 13px;
+      color: var(--gold);
+    }
+
+    .hint small::before {
+      content: counter(lit) " of 8 stars lit";
+    }
+
+    .message {
+      opacity: var(--on, 0);
+      transform: translateY(calc((1 - var(--on, 0)) * 16px));
+      transition: 1.4s 1.4s;
+      pointer-events: none;
+    }
+
+    .message h1 {
+      margin: 0 0 8px;
+      font: italic 600 34px/1.15 var(--font-display);
+      color: #fff;
+    }
+
+    .message p {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.6;
+      opacity: 0.85;
+    }
+
+    .message .signature {
+      margin-top: 10px;
+      font: italic 500 20px var(--font-display);
+      color: var(--pink);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before {
+        animation: none !important;
+        transition-duration: 0.01s !important;
+        transition-delay: 0s !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="sky">
+
+    <div class="map">
+      <svg viewBox="0 0 100 100" aria-hidden="true">
+        <polygon points="50,86 22,58 14,32 32,16 50,32 68,16 86,32 78,58" />
+        <line class="l1" x1="50" y1="86" x2="22" y2="58" />
+        <line class="l2" x1="22" y1="58" x2="14" y2="32" />
+        <line class="l3" x1="14" y1="32" x2="32" y2="16" />
+        <line class="l4" x1="32" y1="16" x2="50" y2="32" />
+        <line class="l5" x1="50" y1="32" x2="68" y2="16" />
+        <line class="l6" x1="68" y1="16" x2="86" y2="32" />
+        <line class="l7" x1="86" y1="32" x2="78" y2="58" />
+        <line class="l8" x1="78" y1="58" x2="50" y2="86" />
+      </svg>
+
+      <input type="checkbox" id="s1"><label class="star" for="s1" style="--x:50; --y:86; --i:1" aria-label="Star 1"></label>
+      <input type="checkbox" id="s2"><label class="star" for="s2" style="--x:22; --y:58; --i:2" aria-label="Star 2"></label>
+      <input type="checkbox" id="s3"><label class="star" for="s3" style="--x:14; --y:32; --i:3" aria-label="Star 3"></label>
+      <input type="checkbox" id="s4"><label class="star" for="s4" style="--x:32; --y:16; --i:4" aria-label="Star 4"></label>
+      <input type="checkbox" id="s5"><label class="star" for="s5" style="--x:50; --y:32; --i:5" aria-label="Star 5"></label>
+      <input type="checkbox" id="s6"><label class="star" for="s6" style="--x:68; --y:16; --i:6" aria-label="Star 6"></label>
+      <input type="checkbox" id="s7"><label class="star" for="s7" style="--x:86; --y:32; --i:7" aria-label="Star 7"></label>
+      <input type="checkbox" id="s8"><label class="star" for="s8" style="--x:78; --y:58; --i:8" aria-label="Star 8"></label>
+    </div>
+
+    <div class="caption">
+      <p class="hint">
+        Connect the stars to see what's on inside <br>
+        😉😏😘😏😘😉 
+        <small></small>
+      </p>
+
+      <div class="message">
+        <h1>Happy Girlfriends<br> Day bheng</h1>
+        <p> Sorry late yung message q, happy girlfriends day po ulii. Thankyou for being the best girlfriend I could ever wish for, sobrang saya ko sa relationship na meron tayo ngaun and sana ganun din nararamdaman m. Lahat ng mga moments natin sobrang saya dahil lang ikaw yung kasama ko. Thankyou kasi palagi ka andyan kahit ano man napagdadaanan natin, di ko man palagi nasasabi pero palagi kita na aappreciate.</p>
+        <p class="signature">Iloveyou bhing, thankyou palagi</p>
+      </div>
+    </div>
+
+  </main>
+</body>
+</html>
